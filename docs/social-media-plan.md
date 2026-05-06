@@ -54,6 +54,64 @@ Follow along. Something's cooking 🍲
 
 ---
 
+### Post 1 - Day 1 (LinkedIn)
+
+**Caption:**
+```
+🍱 A question for everyone living away from home:
+
+When was the last time you had ghar ka khana?
+
+Not restaurant food pretending to be homemade.
+Real, fresh, made-with-love food.
+
+For most of us:
+❌ Cooking daily = no time
+❌ Ordering daily = ₹300-400 gone
+❌ Health = slowly declining
+❌ Missing mom's food = daily
+
+We're building something to fix this.
+
+Follow along. Something's cooking 🍲
+
+🔗 Join the waitlist: bellybento.com
+
+#GharKaKhana #HomemadeFood #FoodTech #ComingSoon #BellyBento
+```
+
+**Image:** Nostalgic home food visual with text overlay
+
+---
+
+### Post 1B - Day 1 Evening (Facebook/X/LinkedIn)
+
+**Time:** 7-9pm IST
+
+**Caption:**
+```
+That first bite of mom's dal chawal after months away.
+
+You know the feeling.
+
+The warmth. The taste. The "finally home" moment.
+
+What if you could have that... every day?
+Even in a new city. Even with a 10-hour job.
+
+That's what we're building.
+
+🍱 bellybento.com
+
+#GharKaKhana #BellyBento #ComingSoon
+```
+
+**Image:** Same Day 1 image (nostalgic home food visual)
+
+**Note:** Morning post = logical (problem). Evening post = emotional (memory). Together they tell Day 1 story.
+
+---
+
 ### Post 2 - Day 3 (X/Twitter primary, cross-post to others)
 
 **Caption:**
@@ -312,6 +370,14 @@ Everyone else: Stay tuned 🇮🇳
 - Good for founder/startup community
 - Engage with #BuildingInPublic community
 
+### LinkedIn
+- Professional, founder-focused content
+- Business angle: market opportunity, startup journey
+- Great for investor visibility and partnerships
+- Use personal stories with professional insight
+- Engage with startup/entrepreneur community
+- Profile: linkedin.com/company/bellybento/
+
 ---
 
 ## Posting Schedule
@@ -319,6 +385,7 @@ Everyone else: Stay tuned 🇮🇳
 | Day | Platform | Post Type |
 |-----|----------|-----------|
 | Mon | Instagram + FB | Main content |
+| Tue | LinkedIn | Professional insight |
 | Wed | X/Twitter | Thread/Update |
 | Fri | All | Milestone/Story |
 | Daily | IG Stories | Behind-the-scenes |
@@ -330,6 +397,7 @@ Everyone else: Stay tuned 🇮🇳
 - **Instagram:** 11am-1pm or 7-9pm
 - **Facebook:** 1-4pm
 - **X/Twitter:** 9am or 12pm
+- **LinkedIn:** 8-10am or 5-6pm (business hours)
 
 ---
 
@@ -376,4 +444,17 @@ Everyone else: Stay tuned 🇮🇳
 
 ---
 
-*Last updated: May 4, 2026*
+---
+
+## Social Media Accounts
+
+| Platform | Handle | URL |
+|----------|--------|-----|
+| Instagram | @trybellybento | instagram.com/trybellybento |
+| Facebook | BellyBento | facebook.com/trybellybento |
+| X (Twitter) | @trybellybento | x.com/trybellybento |
+| LinkedIn | BellyBento | linkedin.com/company/bellybento |
+
+---
+
+*Last updated: May 6, 2026*
