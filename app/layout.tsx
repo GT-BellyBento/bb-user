@@ -87,6 +87,7 @@ const jsonLd = {
         'https://x.com/trybellybento',
         'https://www.instagram.com/trybellybento/',
         'https://www.facebook.com/trybellybento',
+        'https://www.linkedin.com/company/bellybento/',
       ],
       contactPoint: {
         '@type': 'ContactPoint',
