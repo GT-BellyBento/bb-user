@@ -17,6 +17,11 @@ interface Provider {
   experience: string | null;
   current_customers: string | null;
   created_at: string;
+  referral_code: string | null;
+  referred_by: string | null;
+  referred_by_type: 'customer' | 'provider' | null;
+  referral_count?: number;
+  referrer_name?: string | null;
 }
 
 interface Props {
@@ -47,7 +52,7 @@ export default function ProvidersTable({ providers: initialProviders }: Props) {
 
   // Export to CSV
   const exportCSV = () => {
-    const headers = ['Name', 'Email', 'Phone', 'State', 'City', 'Profile Completed', 'Business Name', 'Capacity', 'Cuisine', 'FSSAI', 'Experience', 'Current Customers', 'Signup Date'];
+    const headers = ['Name', 'Email', 'Phone', 'State', 'City', 'Profile Completed', 'Business Name', 'Capacity', 'Cuisine', 'FSSAI', 'Experience', 'Current Customers', 'Referral Code', 'Referred By', 'Referrals', 'Signup Date'];
     const rows = providers.map((p) => [
       p.name,
       p.email,
@@ -61,6 +66,9 @@ export default function ProvidersTable({ providers: initialProviders }: Props) {
       p.fssai_status || '',
       p.experience || '',
       p.current_customers || '',
+      p.referral_code || '',
+      p.referred_by ? `${p.referrer_name || 'Unknown'} (${p.referred_by_type})` : '',
+      p.referral_count || 0,
       new Date(p.created_at).toLocaleDateString(),
     ]);
 
@@ -171,8 +179,10 @@ export default function ProvidersTable({ providers: initialProviders }: Props) {
                 <th className="px-4 py-3 text-left">Profile</th>
                 <th className="px-4 py-3 text-left">Business Name</th>
                 <th className="px-4 py-3 text-left">Capacity</th>
-                <th className="px-4 py-3 text-left">Cuisine</th>
                 <th className="px-4 py-3 text-left">FSSAI</th>
+                <th className="px-4 py-3 text-left">Referral Code</th>
+                <th className="px-4 py-3 text-left">Referred By</th>
+                <th className="px-4 py-3 text-left">Referrals</th>
                 <th className="px-4 py-3 text-left">Signup</th>
                 <th className="px-4 py-3 text-left">Action</th>
               </tr>
@@ -196,7 +206,6 @@ export default function ProvidersTable({ providers: initialProviders }: Props) {
                     </td>
                     <td className="px-4 py-3 text-gray-600">{provider.business_name || '-'}</td>
                     <td className="px-4 py-3 text-gray-600">{provider.daily_capacity || '-'}</td>
-                    <td className="px-4 py-3 text-gray-600">{provider.cuisine_type || '-'}</td>
                     <td className="px-4 py-3">
                       {provider.fssai_status === 'Yes, I have FSSAI' ? (
                         <span className="text-green-600 text-xs">✓ Yes</span>
@@ -206,6 +215,32 @@ export default function ProvidersTable({ providers: initialProviders }: Props) {
                         <span className="text-gray-500 text-xs">{provider.fssai_status}</span>
                       ) : (
                         <span className="text-gray-400">-</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3">
+                      {provider.referral_code ? (
+                        <span className="font-mono text-xs bg-gray-100 px-2 py-1 rounded">{provider.referral_code}</span>
+                      ) : (
+                        <span className="text-gray-400">-</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3">
+                      {provider.referred_by ? (
+                        <div className="flex items-center gap-1">
+                          <span className="text-sm">{provider.referrer_name || provider.referred_by}</span>
+                          <span className={`text-xs px-1.5 py-0.5 rounded ${provider.referred_by_type === 'provider' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}`}>
+                            {provider.referred_by_type === 'provider' ? 'P' : 'C'}
+                          </span>
+                        </div>
+                      ) : (
+                        <span className="text-gray-400">-</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3">
+                      {provider.referral_count ? (
+                        <span className="bg-primary/10 text-primary font-medium px-2 py-1 rounded text-sm">{provider.referral_count}</span>
+                      ) : (
+                        <span className="text-gray-400">0</span>
                       )}
                     </td>
                     <td className="px-4 py-3 text-gray-500">
@@ -224,7 +259,7 @@ export default function ProvidersTable({ providers: initialProviders }: Props) {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={13} className="px-4 py-8 text-center text-gray-400">
+                  <td colSpan={15} className="px-4 py-8 text-center text-gray-400">
                     {search ? 'No matching results' : 'No providers yet'}
                   </td>
                 </tr>

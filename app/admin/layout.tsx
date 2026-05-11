@@ -18,6 +18,7 @@ const navItems = [
     items: [
       { name: 'Customers', href: '/admin/customers' },
       { name: 'Providers', href: '/admin/providers' },
+      { name: 'Referrals', href: '/admin/referrals' },
     ],
   },
 ];

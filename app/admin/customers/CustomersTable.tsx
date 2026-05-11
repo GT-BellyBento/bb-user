@@ -16,6 +16,11 @@ interface Customer {
   current_solution: string | null;
   urgency: string | null;
   created_at: string;
+  referral_code: string | null;
+  referred_by: string | null;
+  referred_by_type: 'customer' | 'provider' | null;
+  referral_count?: number;
+  referrer_name?: string | null;
 }
 
 interface Props {
@@ -46,7 +51,7 @@ export default function CustomersTable({ customers: initialCustomers }: Props) {
 
   // Export to CSV
   const exportCSV = () => {
-    const headers = ['Name', 'Email', 'Phone', 'State', 'City', 'Profile Completed', 'Diet', 'Budget', 'Meals Needed', 'Current Solution', 'Urgency', 'Signup Date'];
+    const headers = ['Name', 'Email', 'Phone', 'State', 'City', 'Profile Completed', 'Diet', 'Budget', 'Meals Needed', 'Current Solution', 'Urgency', 'Referral Code', 'Referred By', 'Referrals', 'Signup Date'];
     const rows = customers.map((c) => [
       c.name,
       c.email,
@@ -59,6 +64,9 @@ export default function CustomersTable({ customers: initialCustomers }: Props) {
       c.meals_needed || '',
       c.current_solution || '',
       c.urgency || '',
+      c.referral_code || '',
+      c.referred_by ? `${c.referrer_name || 'Unknown'} (${c.referred_by_type})` : '',
+      c.referral_count || 0,
       new Date(c.created_at).toLocaleDateString(),
     ]);
 
@@ -169,6 +177,9 @@ export default function CustomersTable({ customers: initialCustomers }: Props) {
                 <th className="px-4 py-3 text-left">Profile</th>
                 <th className="px-4 py-3 text-left">Diet</th>
                 <th className="px-4 py-3 text-left">Budget</th>
+                <th className="px-4 py-3 text-left">Referral Code</th>
+                <th className="px-4 py-3 text-left">Referred By</th>
+                <th className="px-4 py-3 text-left">Referrals</th>
                 <th className="px-4 py-3 text-left">Signup</th>
                 <th className="px-4 py-3 text-left">Action</th>
               </tr>
@@ -192,6 +203,32 @@ export default function CustomersTable({ customers: initialCustomers }: Props) {
                     </td>
                     <td className="px-4 py-3 text-gray-600">{customer.diet_preference || '-'}</td>
                     <td className="px-4 py-3 text-gray-600">{customer.budget_range || '-'}</td>
+                    <td className="px-4 py-3">
+                      {customer.referral_code ? (
+                        <span className="font-mono text-xs bg-gray-100 px-2 py-1 rounded">{customer.referral_code}</span>
+                      ) : (
+                        <span className="text-gray-400">-</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3">
+                      {customer.referred_by ? (
+                        <div className="flex items-center gap-1">
+                          <span className="text-sm">{customer.referrer_name || customer.referred_by}</span>
+                          <span className={`text-xs px-1.5 py-0.5 rounded ${customer.referred_by_type === 'provider' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}`}>
+                            {customer.referred_by_type === 'provider' ? 'P' : 'C'}
+                          </span>
+                        </div>
+                      ) : (
+                        <span className="text-gray-400">-</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3">
+                      {customer.referral_count ? (
+                        <span className="bg-primary/10 text-primary font-medium px-2 py-1 rounded text-sm">{customer.referral_count}</span>
+                      ) : (
+                        <span className="text-gray-400">0</span>
+                      )}
+                    </td>
                     <td className="px-4 py-3 text-gray-500">
                       {new Date(customer.created_at).toISOString().split('T')[0]}
                     </td>
@@ -208,7 +245,7 @@ export default function CustomersTable({ customers: initialCustomers }: Props) {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={11} className="px-4 py-8 text-center text-gray-400">
+                  <td colSpan={14} className="px-4 py-8 text-center text-gray-400">
                     {search ? 'No matching results' : 'No customers yet'}
                   </td>
                 </tr>

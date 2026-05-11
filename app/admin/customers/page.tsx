@@ -15,10 +15,16 @@ interface Customer {
   current_solution: string | null;
   urgency: string | null;
   created_at: string;
+  referral_code: string | null;
+  referred_by: string | null;
+  referred_by_type: 'customer' | 'provider' | null;
+  referral_count?: number;
+  referrer_name?: string | null;
 }
 
 async function getCustomers() {
-  const { data, error } = await supabase
+  // Fetch customers
+  const { data: customers, error } = await supabase
     .from('bb_waitlist_customers')
     .select('*')
     .order('created_at', { ascending: false });
@@ -28,7 +34,40 @@ async function getCustomers() {
     return [];
   }
 
-  return data as Customer[];
+  // Fetch all customers and providers for referral lookups
+  const { data: allCustomers } = await supabase.from('bb_waitlist_customers').select('referral_code, name, referred_by');
+  const { data: allProviders } = await supabase.from('bb_waitlist_providers').select('referral_code, name, referred_by');
+
+  // Build lookup maps
+  const customerByCode = new Map((allCustomers || []).map(c => [c.referral_code, c.name]));
+  const providerByCode = new Map((allProviders || []).map(p => [p.referral_code, p.name]));
+
+  // Count referrals for each code
+  const referralCounts = new Map<string, number>();
+  [...(allCustomers || []), ...(allProviders || [])].forEach(entry => {
+    if (entry.referred_by) {
+      referralCounts.set(entry.referred_by, (referralCounts.get(entry.referred_by) || 0) + 1);
+    }
+  });
+
+  // Enrich customers with referral data
+  const enrichedCustomers = (customers || []).map(customer => {
+    let referrerName: string | null = null;
+    if (customer.referred_by) {
+      if (customer.referred_by_type === 'customer') {
+        referrerName = customerByCode.get(customer.referred_by) || null;
+      } else if (customer.referred_by_type === 'provider') {
+        referrerName = providerByCode.get(customer.referred_by) || null;
+      }
+    }
+    return {
+      ...customer,
+      referral_count: referralCounts.get(customer.referral_code) || 0,
+      referrer_name: referrerName,
+    };
+  });
+
+  return enrichedCustomers as Customer[];
 }
 
 export default async function CustomersPage() {
