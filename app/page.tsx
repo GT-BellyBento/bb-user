@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import Header from '@/components/Header';
 import Hero from '@/components/Hero';
 import HowItWorks from '@/components/HowItWorks';
@@ -12,7 +13,9 @@ export default function Home() {
       <Hero />
       <HowItWorks />
       <Benefits />
-      <WaitlistForm />
+      <Suspense fallback={<div className="py-16 sm:py-24 bg-primary" />}>
+        <WaitlistForm />
+      </Suspense>
       <Footer />
     </main>
   );
