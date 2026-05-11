@@ -9,6 +9,7 @@ interface Provider {
   state: string;
   city: string;
   profile_completed: boolean;
+  business_name: string | null;
   daily_capacity: string | null;
   cuisine_type: string | null;
   fssai_status: string | null;

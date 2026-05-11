@@ -10,6 +10,7 @@ interface Provider {
   state: string;
   city: string;
   profile_completed: boolean;
+  business_name: string | null;
   daily_capacity: string | null;
   cuisine_type: string | null;
   fssai_status: string | null;
@@ -46,7 +47,7 @@ export default function ProvidersTable({ providers: initialProviders }: Props) {
 
   // Export to CSV
   const exportCSV = () => {
-    const headers = ['Name', 'Email', 'Phone', 'State', 'City', 'Profile Completed', 'Capacity', 'Cuisine', 'FSSAI', 'Experience', 'Current Customers', 'Signup Date'];
+    const headers = ['Name', 'Email', 'Phone', 'State', 'City', 'Profile Completed', 'Business Name', 'Capacity', 'Cuisine', 'FSSAI', 'Experience', 'Current Customers', 'Signup Date'];
     const rows = providers.map((p) => [
       p.name,
       p.email,
@@ -54,6 +55,7 @@ export default function ProvidersTable({ providers: initialProviders }: Props) {
       p.state,
       p.city,
       p.profile_completed ? 'Yes' : 'No',
+      p.business_name || '',
       p.daily_capacity || '',
       p.cuisine_type || '',
       p.fssai_status || '',
@@ -167,6 +169,7 @@ export default function ProvidersTable({ providers: initialProviders }: Props) {
                 <th className="px-4 py-3 text-left">City</th>
                 <th className="px-4 py-3 text-left">State</th>
                 <th className="px-4 py-3 text-left">Profile</th>
+                <th className="px-4 py-3 text-left">Business Name</th>
                 <th className="px-4 py-3 text-left">Capacity</th>
                 <th className="px-4 py-3 text-left">Cuisine</th>
                 <th className="px-4 py-3 text-left">FSSAI</th>
@@ -191,6 +194,7 @@ export default function ProvidersTable({ providers: initialProviders }: Props) {
                         <span className="text-gray-400">-</span>
                       )}
                     </td>
+                    <td className="px-4 py-3 text-gray-600">{provider.business_name || '-'}</td>
                     <td className="px-4 py-3 text-gray-600">{provider.daily_capacity || '-'}</td>
                     <td className="px-4 py-3 text-gray-600">{provider.cuisine_type || '-'}</td>
                     <td className="px-4 py-3">
@@ -220,7 +224,7 @@ export default function ProvidersTable({ providers: initialProviders }: Props) {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={12} className="px-4 py-8 text-center text-gray-400">
+                  <td colSpan={13} className="px-4 py-8 text-center text-gray-400">
                     {search ? 'No matching results' : 'No providers yet'}
                   </td>
                 </tr>
