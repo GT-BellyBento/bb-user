@@ -129,6 +129,7 @@ export async function PATCH(request: NextRequest) {
     } else if (userType === 'provider') {
       updateData = {
         ...updateData,
+        business_name: additionalFields.businessName || null,
         daily_capacity: additionalFields.dailyCapacity || null,
         cuisine_type: additionalFields.cuisineType || null,
         fssai_status: additionalFields.fssaiStatus || null,

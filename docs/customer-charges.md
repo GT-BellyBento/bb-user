@@ -303,11 +303,21 @@ Some fees will drive customers away:
 
 ## When to Introduce Customer Charges
 
+### Early Bird Incentives (Waitlist vs Post-Launch)
+
+| When Customer Joins | Free Period (No Fees) |
+|---------------------|----------------------|
+| **Waitlist (before launch)** | 3 months FREE |
+| **After launch** | 1 month FREE |
+| **After Month 3** | No free period |
+
+> **Why?** Early believers who joined waitlist get rewarded. Creates urgency to join early.
+
 ### Phased Approach
 
 | Phase | Timeline | Charges |
 |-------|----------|---------|
-| **Launch** | Month 1-3 | NO fees (grow user base) |
+| **Launch** | Month 1-3 | NO fees for waitlist users, 1 month free for new users |
 | **Growth** | Month 4-6 | Small platform fee (₹5) |
 | **Maturity** | Month 6-12 | Full fees + subscriptions |
 | **Scale** | Year 1+ | Optimize based on data |

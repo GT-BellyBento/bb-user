@@ -22,6 +22,7 @@ interface FormData {
   currentSolution?: string;
   urgency?: string;
   // Step 2 - Provider Fields
+  businessName?: string;
   dailyCapacity?: string;
   cuisineType?: string;
   fssaiStatus?: string;
@@ -199,6 +200,7 @@ export default function WaitlistForm() {
           currentSolution: formData.currentSolution,
           urgency: formData.urgency,
           // Provider fields
+          businessName: formData.businessName,
           dailyCapacity: formData.dailyCapacity,
           cuisineType: formData.cuisineType,
           fssaiStatus: formData.fssaiStatus,
@@ -625,6 +627,21 @@ export default function WaitlistForm() {
                 {/* Provider Step 2 Fields */}
                 {formData.userType === 'provider' && (
                   <>
+                    <div>
+                      <label htmlFor="businessName" className="block text-sm font-medium text-gray-700 mb-1">
+                        Business Name
+                      </label>
+                      <input
+                        type="text"
+                        id="businessName"
+                        name="businessName"
+                        value={formData.businessName || ''}
+                        onChange={handleChange}
+                        placeholder="Enter your tiffin center name"
+                        className="input-field"
+                      />
+                    </div>
+
                     <div>
                       <label htmlFor="dailyCapacity" className="block text-sm font-medium text-gray-700 mb-1">
                         Daily Tiffin Capacity
