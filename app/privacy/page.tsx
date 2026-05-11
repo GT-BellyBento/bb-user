@@ -232,7 +232,7 @@ export default function PrivacyPage() {
                             <li><strong>Restrict Processing:</strong> Limit how we use your data</li>
                         </ul>
                         <p className="mt-4">
-                            To exercise these rights, contact us at <strong>privacy@bellybento.com</strong>
+                            To exercise these rights, contact us at <strong>hello@bellybento.com</strong>
                         </p>
                     </section>
 
@@ -323,10 +323,10 @@ export default function PrivacyPage() {
                             of the Grievance Officer are:
                         </p>
                         <div className="bg-gray-50 p-4 rounded-lg mt-4">
-                            <p><strong>Grievance Officer:</strong> [Name]</p>
-                            <p><strong>Email:</strong> grievance@bellybento.com</p>
-                            <p><strong>Phone:</strong> [Phone Number]</p>
-                            <p><strong>Address:</strong> [Business Address]</p>
+                            <p><strong>Grievance Officer:</strong> Gajraj Singh</p>
+                            <p><strong>Email:</strong> gajraj.singh@bellybento.com</p>
+                            <p><strong>Phone:</strong> +91 8233662031</p>
+                            <p><strong>Address:</strong> Available upon request</p>
                             <p className="mt-2 text-sm text-gray-600">
                                 Response time: Within 30 days of receiving the complaint
                             </p>
@@ -338,9 +338,9 @@ export default function PrivacyPage() {
                         <p>For privacy-related questions or concerns, contact us at:</p>
                         <div className="bg-gray-50 p-4 rounded-lg mt-2">
                             <p><strong>BellyBento</strong></p>
-                            <p>Email: privacy@bellybento.com</p>
-                            <p>Phone: [Your Phone Number]</p>
-                            <p>Address: [Your Business Address]</p>
+                            <p>Email: hello@bellybento.com</p>
+                            <p>Phone: +91 8233662031</p>
+                            <p>Address: Available upon request</p>
                         </div>
                     </section>
 

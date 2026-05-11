@@ -307,11 +307,11 @@ Some fees will drive customers away:
 
 | When Customer Joins | Free Period (No Fees) |
 |---------------------|----------------------|
-| **Waitlist (before launch)** | 3 months FREE |
+| **Waitlist (before launch)** | 1 month FREE |
 | **After launch** | 1 month FREE |
 | **After Month 3** | No free period |
 
-> **Why?** Early believers who joined waitlist get rewarded. Creates urgency to join early.
+> **Why?** Early believers who joined waitlist get rewarded with ₹100 credits. Creates urgency to join early.
 
 ### Phased Approach
 

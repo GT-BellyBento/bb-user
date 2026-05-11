@@ -1,7 +1,15 @@
+// GPS Location Pin Icon
+const LocationPinIcon = () => (
+  <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M24 4C16.268 4 10 10.268 10 18C10 28.5 24 44 24 44C24 44 38 28.5 38 18C38 10.268 31.732 4 24 4Z" fill="#FF6B6B" stroke="#E55555" strokeWidth="2"/>
+    <circle cx="24" cy="18" r="6" fill="white"/>
+  </svg>
+);
+
 export default function HowItWorks() {
   const steps = [
     {
-      icon: '📍',
+      icon: <LocationPinIcon />,
       title: 'Find',
       description: 'Discover tiffin providers near you based on your location and preferences.',
     },
@@ -11,7 +19,7 @@ export default function HowItWorks() {
       description: 'Browse menus, read reviews, and select the perfect meal plan for your needs.',
     },
     {
-      icon: '🚚',
+      icon: '🛵',
       title: 'Enjoy',
       description: 'Get fresh, homemade tiffins delivered to your doorstep daily.',
     },
@@ -42,7 +50,7 @@ export default function HowItWorks() {
               {/* Step Card */}
               <div className="relative bg-white">
                 {/* Icon Circle */}
-                <div className="w-24 h-24 mx-auto mb-6 bg-primary-50 rounded-full flex items-center justify-center text-5xl shadow-md">
+                <div className="w-24 h-24 mx-auto mb-6 bg-primary-50 rounded-full flex items-center justify-center shadow-md text-5xl">
                   {step.icon}
                 </div>
 

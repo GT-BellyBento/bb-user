@@ -110,7 +110,28 @@ export default function TermsPage() {
                             <li>Handle customer complaints professionally</li>
                             <li>Comply with all applicable food safety laws</li>
                             <li>Keep their FSSAI registration current and valid</li>
+                            <li>Conduct all customer transactions exclusively through the Platform</li>
                         </ul>
+
+                        <h3 className="text-xl font-semibold text-dark mt-4 mb-2">6.1 Non-Circumvention Policy</h3>
+                        <p>
+                            Providers agree not to solicit, encourage, or accept direct transactions with Customers 
+                            outside the BellyBento Platform to avoid platform fees or commissions.
+                        </p>
+                        <div className="bg-red-50 border-l-4 border-red-400 p-4 my-4">
+                            <p className="font-semibold mb-2">Violation Consequences:</p>
+                            <p className="mb-2">If a Provider is found circumventing the Platform:</p>
+                            <ul className="list-disc ml-6 space-y-1">
+                                <li>Account may be <strong>immediately suspended or terminated</strong> without prior notice</li>
+                                <li>All <strong>pending payouts may be withheld</strong> as liquidated damages</li>
+                                <li>Provider may be <strong>permanently banned</strong> from re-registering on the Platform</li>
+                                <li>BellyBento reserves the right to <strong>pursue legal remedies</strong> including recovery of lost commissions, damages, and legal costs</li>
+                            </ul>
+                            <p className="mt-3 text-sm text-gray-600">
+                                This policy exists to maintain a fair marketplace for all Providers and to ensure 
+                                Customers receive the protections and services the Platform provides.
+                            </p>
+                        </div>
                     </section>
 
                     <section className="mb-8">
@@ -228,7 +249,7 @@ export default function TermsPage() {
                             <li>Arbitration under the Arbitration and Conciliation Act, 1996</li>
                         </ol>
                         <p className="mt-4">
-                            The courts of [Your City], India shall have exclusive jurisdiction.
+                            The courts of Rajsamand, Rajasthan, India shall have exclusive jurisdiction.
                         </p>
                     </section>
 
@@ -236,7 +257,7 @@ export default function TermsPage() {
                         <h2 className="text-2xl font-bold text-dark mb-4">15. Governing Law</h2>
                         <p>
                             These Terms are governed by the laws of India. Any disputes shall be subject to the
-                            exclusive jurisdiction of courts in [Your City], India.
+                            exclusive jurisdiction of courts in Rajsamand, Rajasthan, India.
                         </p>
                     </section>
 
@@ -249,13 +270,33 @@ export default function TermsPage() {
                     </section>
 
                     <section className="mb-8">
-                        <h2 className="text-2xl font-bold text-dark mb-4">17. Contact Us</h2>
+                        <h2 className="text-2xl font-bold text-dark mb-4">17. Promotional Offers & Credits</h2>
+                        <p>
+                            BellyBento may offer promotional benefits including but not limited to welcome credits,
+                            free trial periods, referral bonuses, and discounts (&quot;Promotional Offers&quot;).
+                        </p>
+                        <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 my-4">
+                            <p className="font-semibold mb-2">Important Terms:</p>
+                            <ul className="list-disc ml-6 space-y-1">
+                                <li>All Promotional Offers are subject to terms and conditions at the time of redemption</li>
+                                <li>BellyBento reserves the right to modify, suspend, or discontinue any offer without prior notice</li>
+                                <li>Credits may have expiry periods and usage limits as specified at the time of issuance</li>
+                                <li>Promotional Offers cannot be exchanged for cash or transferred to others</li>
+                                <li>Waitlist benefits are valid only for users who complete registration before platform launch</li>
+                                <li>Specific offer details, including validity and restrictions, will be communicated at the time of launch</li>
+                                <li>Abuse or fraudulent use of Promotional Offers may result in account suspension</li>
+                            </ul>
+                        </div>
+                    </section>
+
+                    <section className="mb-8">
+                        <h2 className="text-2xl font-bold text-dark mb-4">18. Contact Us</h2>
                         <p>For questions about these Terms, contact us at:</p>
                         <div className="bg-gray-50 p-4 rounded-lg mt-2">
                             <p><strong>BellyBento</strong></p>
-                            <p>Email: legal@bellybento.com</p>
-                            <p>Phone: [Your Phone Number]</p>
-                            <p>Address: [Your Business Address]</p>
+                            <p>Email: hello@bellybento.com</p>
+                            <p>Phone: +91 8233662031</p>
+                            <p>Address: Available upon request</p>
                         </div>
                     </section>
 

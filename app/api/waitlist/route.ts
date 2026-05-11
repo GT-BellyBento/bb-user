@@ -1,10 +1,50 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 
+// Generate referral code prefix: FIRSTNAME + LAST_INITIAL (if available)
+function getReferralPrefix(name: string): string {
+  const nameParts = name.trim().split(/\s+/);
+  const firstName = nameParts[0].toUpperCase().replace(/[^A-Z]/g, '');
+  const lastInitial = nameParts.length > 1 
+    ? nameParts[nameParts.length - 1][0].toUpperCase().replace(/[^A-Z]/g, '') 
+    : '';
+  return `${firstName}${lastInitial}`;
+}
+
+// Generate unique referral code: PREFIX + sequential number (001, 002, etc.)
+async function getUniqueReferralCode(name: string): Promise<string> {
+  const prefix = getReferralPrefix(name);
+  
+  // Count existing codes with this prefix in both tables
+  const [customersResult, providersResult] = await Promise.all([
+    supabase.from('bb_waitlist_customers').select('id', { count: 'exact', head: true }).like('referral_code', `${prefix}%`),
+    supabase.from('bb_waitlist_providers').select('id', { count: 'exact', head: true }).like('referral_code', `${prefix}%`),
+  ]);
+  
+  const existingCount = (customersResult.count || 0) + (providersResult.count || 0);
+  const nextNumber = existingCount + 1;
+  
+  // Pad to at least 3 digits (allows up to 999, auto-expands beyond)
+  const paddedNum = nextNumber.toString().padStart(3, '0');
+  return `${prefix}${paddedNum}`;
+}
+
+// Find referrer type by checking both tables
+async function findReferrerType(code: string): Promise<'customer' | 'provider' | null> {
+  const [customerCheck, providerCheck] = await Promise.all([
+    supabase.from('bb_waitlist_customers').select('id').eq('referral_code', code).single(),
+    supabase.from('bb_waitlist_providers').select('id').eq('referral_code', code).single(),
+  ]);
+  
+  if (customerCheck.data) return 'customer';
+  if (providerCheck.data) return 'provider';
+  return null;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, email, phone, state, city, userType } = body;
+    const { name, email, phone, state, city, userType, referredBy } = body;
 
     // Validate required fields
     if (!name || !email || !phone || !state || !city || !userType) {
@@ -34,6 +74,15 @@ export async function POST(request: NextRequest) {
     // Select table based on user type
     const tableName = userType === 'customer' ? 'bb_waitlist_customers' : 'bb_waitlist_providers';
 
+    // Generate unique referral code
+    const referralCode = await getUniqueReferralCode(name);
+
+    // Determine referrer type if referral code provided
+    let referredByType: 'customer' | 'provider' | null = null;
+    if (referredBy) {
+      referredByType = await findReferrerType(referredBy);
+    }
+
     // Insert into Supabase
     const { data, error } = await supabase
       .from(tableName)
@@ -44,8 +93,11 @@ export async function POST(request: NextRequest) {
         state,
         city,
         profile_completed: false,
+        referral_code: referralCode,
+        referred_by: referredBy || null,
+        referred_by_type: referredByType,
       })
-      .select('id')
+      .select('id, referral_code')
       .single();
 
     if (error) {
@@ -77,13 +129,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log('New waitlist entry:', { id: data.id, userType, email });
+    console.log('New waitlist entry:', { id: data.id, userType, email, referralCode: data.referral_code });
 
     return NextResponse.json(
       {
         message: 'Successfully joined the waitlist!',
         id: data.id,
         userType,
+        referralCode: data.referral_code,
       },
       { status: 201 }
     );

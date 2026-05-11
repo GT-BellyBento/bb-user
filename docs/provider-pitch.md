@@ -18,7 +18,7 @@ A simple, layman-friendly guide for pitching to home cooks and tiffin providers.
 
 | When They Join | Free Period (No Fees) |
 |----------------|----------------------|
-| **Waitlist (before launch)** | 3 months FREE |
+| **Waitlist (before launch)** | 1 month FREE + ₹100 credits |
 | **After launch** | 1 month FREE |
 | **After Month 3** | No free period |
 
