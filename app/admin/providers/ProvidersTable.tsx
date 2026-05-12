@@ -40,7 +40,7 @@ export default function ProvidersTable({ providers: initialProviders }: Props) {
   const filtered = providers.filter(
     (p) =>
       p.name.toLowerCase().includes(search.toLowerCase()) ||
-      p.email.toLowerCase().includes(search.toLowerCase()) ||
+      (p.email && p.email.toLowerCase().includes(search.toLowerCase())) ||
       p.phone.includes(search) ||
       p.city.toLowerCase().includes(search.toLowerCase())
   );

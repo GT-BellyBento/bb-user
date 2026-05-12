@@ -39,7 +39,7 @@ export default function CustomersTable({ customers: initialCustomers }: Props) {
   const filtered = customers.filter(
     (c) =>
       c.name.toLowerCase().includes(search.toLowerCase()) ||
-      c.email.toLowerCase().includes(search.toLowerCase()) ||
+      (c.email && c.email.toLowerCase().includes(search.toLowerCase())) ||
       c.phone.includes(search) ||
       c.city.toLowerCase().includes(search.toLowerCase())
   );
