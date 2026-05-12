@@ -167,7 +167,7 @@ export default function ProvidersTable({ providers: initialProviders }: Props) {
 
         {/* Table */}
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm min-w-max">
             <thead className="bg-gray-50 text-gray-600">
               <tr>
                 <th className="px-4 py-3 text-left">#</th>
@@ -179,7 +179,10 @@ export default function ProvidersTable({ providers: initialProviders }: Props) {
                 <th className="px-4 py-3 text-left">Profile</th>
                 <th className="px-4 py-3 text-left">Business Name</th>
                 <th className="px-4 py-3 text-left">Capacity</th>
+                <th className="px-4 py-3 text-left">Cuisine</th>
                 <th className="px-4 py-3 text-left">FSSAI</th>
+                <th className="px-4 py-3 text-left">Experience</th>
+                <th className="px-4 py-3 text-left">Current Customers</th>
                 <th className="px-4 py-3 text-left">Referral Code</th>
                 <th className="px-4 py-3 text-left">Referred By</th>
                 <th className="px-4 py-3 text-left">Referrals</th>
@@ -206,6 +209,7 @@ export default function ProvidersTable({ providers: initialProviders }: Props) {
                     </td>
                     <td className="px-4 py-3 text-gray-600">{provider.business_name || '-'}</td>
                     <td className="px-4 py-3 text-gray-600">{provider.daily_capacity || '-'}</td>
+                    <td className="px-4 py-3 text-gray-600">{provider.cuisine_type || '-'}</td>
                     <td className="px-4 py-3">
                       {provider.fssai_status === 'Yes, I have FSSAI' ? (
                         <span className="text-green-600 text-xs">✓ Yes</span>
@@ -217,6 +221,8 @@ export default function ProvidersTable({ providers: initialProviders }: Props) {
                         <span className="text-gray-400">-</span>
                       )}
                     </td>
+                    <td className="px-4 py-3 text-gray-600">{provider.experience || '-'}</td>
+                    <td className="px-4 py-3 text-gray-600">{provider.current_customers || '-'}</td>
                     <td className="px-4 py-3">
                       {provider.referral_code ? (
                         <span className="font-mono text-xs bg-gray-100 px-2 py-1 rounded">{provider.referral_code}</span>
@@ -259,7 +265,7 @@ export default function ProvidersTable({ providers: initialProviders }: Props) {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={15} className="px-4 py-8 text-center text-gray-400">
+                  <td colSpan={18} className="px-4 py-8 text-center text-gray-400">
                     {search ? 'No matching results' : 'No providers yet'}
                   </td>
                 </tr>

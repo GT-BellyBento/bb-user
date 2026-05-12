@@ -165,7 +165,7 @@ export default function CustomersTable({ customers: initialCustomers }: Props) {
 
         {/* Table */}
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm min-w-max">
             <thead className="bg-gray-50 text-gray-600">
               <tr>
                 <th className="px-4 py-3 text-left">#</th>
@@ -177,6 +177,9 @@ export default function CustomersTable({ customers: initialCustomers }: Props) {
                 <th className="px-4 py-3 text-left">Profile</th>
                 <th className="px-4 py-3 text-left">Diet</th>
                 <th className="px-4 py-3 text-left">Budget</th>
+                <th className="px-4 py-3 text-left">Meals</th>
+                <th className="px-4 py-3 text-left">Current Solution</th>
+                <th className="px-4 py-3 text-left">Urgency</th>
                 <th className="px-4 py-3 text-left">Referral Code</th>
                 <th className="px-4 py-3 text-left">Referred By</th>
                 <th className="px-4 py-3 text-left">Referrals</th>
@@ -203,6 +206,9 @@ export default function CustomersTable({ customers: initialCustomers }: Props) {
                     </td>
                     <td className="px-4 py-3 text-gray-600">{customer.diet_preference || '-'}</td>
                     <td className="px-4 py-3 text-gray-600">{customer.budget_range || '-'}</td>
+                    <td className="px-4 py-3 text-gray-600">{customer.meals_needed || '-'}</td>
+                    <td className="px-4 py-3 text-gray-600">{customer.current_solution || '-'}</td>
+                    <td className="px-4 py-3 text-gray-600">{customer.urgency || '-'}</td>
                     <td className="px-4 py-3">
                       {customer.referral_code ? (
                         <span className="font-mono text-xs bg-gray-100 px-2 py-1 rounded">{customer.referral_code}</span>
@@ -245,7 +251,7 @@ export default function CustomersTable({ customers: initialCustomers }: Props) {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={14} className="px-4 py-8 text-center text-gray-400">
+                  <td colSpan={17} className="px-4 py-8 text-center text-gray-400">
                     {search ? 'No matching results' : 'No customers yet'}
                   </td>
                 </tr>
