@@ -47,6 +47,9 @@ export default function WaitlistForm() {
   const [userId, setUserId] = useState<string | null>(null);
   const [referralCode, setReferralCode] = useState<string | null>(null);
   const [referredBy, setReferredBy] = useState<string | null>(null);
+  const [referredByFromUrl, setReferredByFromUrl] = useState(false);
+  const [showReferralInput, setShowReferralInput] = useState(false);
+  const [codeCopied, setCodeCopied] = useState(false);
   const { showToast } = useToast();
   const frontRef = useRef<HTMLDivElement>(null);
   const backRef = useRef<HTMLDivElement>(null);
@@ -77,6 +80,8 @@ export default function WaitlistForm() {
     
     if (refParam) {
       setReferredBy(refParam);
+      setReferredByFromUrl(true);
+      setShowReferralInput(true);
     }
   }, [searchParams]);
 
@@ -131,22 +136,16 @@ export default function WaitlistForm() {
       return;
     }
 
-    if (!formData.email.trim()) {
-      showToast('Please enter your email address', 'error');
-      setIsSubmitting(false);
-      emailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      emailRef.current?.focus();
-      return;
-    }
-
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
-      showToast('Please enter a valid email address', 'error');
-      setIsSubmitting(false);
-      emailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      emailRef.current?.focus();
-      return;
+    // Validate email format only if provided
+    if (formData.email.trim()) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email)) {
+        showToast('Please enter a valid email address', 'error');
+        setIsSubmitting(false);
+        emailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        emailRef.current?.focus();
+        return;
+      }
     }
 
     // Validate phone is exactly 10 digits
@@ -256,6 +255,10 @@ export default function WaitlistForm() {
     });
     setUserId(null);
     setReferralCode(null);
+    setReferredBy(null);
+    setReferredByFromUrl(false);
+    setShowReferralInput(false);
+    setCodeCopied(false);
   };
 
   // Share messages based on user type - include user's referral code
@@ -300,12 +303,36 @@ export default function WaitlistForm() {
               Thank you for joining the BellyBento waitlist. We&apos;ll notify you as soon as we launch in your area.
             </p>
 
-            {/* Referral Code Display */}
+            {/* Referral Code Display - Copyable */}
             {referralCode && (
-              <div className="bg-primary/10 border border-primary/20 rounded-xl p-4 mb-6">
+              <div 
+                onClick={async () => {
+                  try {
+                    await navigator.clipboard.writeText(referralCode);
+                    setCodeCopied(true);
+                    setTimeout(() => setCodeCopied(false), 2000);
+                  } catch (err) {
+                    console.error('Failed to copy:', err);
+                  }
+                }}
+                className="bg-primary/10 border border-primary/20 rounded-xl p-4 mb-6 cursor-pointer hover:bg-primary/15 transition-colors group"
+              >
                 <p className="text-sm text-gray-600 mb-1">Your Referral Code</p>
-                <p className="text-2xl font-bold text-primary tracking-wider">{referralCode}</p>
-                <p className="text-xs text-gray-500 mt-1">Share this code with friends!</p>
+                <div className="flex items-center justify-center gap-2">
+                  <p className="text-2xl font-bold text-primary tracking-wider font-mono">{referralCode}</p>
+                  {codeCopied ? (
+                    <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  ) : (
+                    <svg className="w-5 h-5 text-primary/50 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                  )}
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  {codeCopied ? '✓ Copied!' : 'Tap to copy'}
+                </p>
               </div>
             )}
 
@@ -476,14 +503,13 @@ export default function WaitlistForm() {
 
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                    Email Address *
+                    Email Address (optional)
                   </label>
                   <input
                     ref={emailRef}
                     type="email"
                     id="email"
                     name="email"
-                    required
                     value={formData.email}
                     onChange={handleChange}
                     placeholder="you@example.com"
@@ -562,6 +588,55 @@ export default function WaitlistForm() {
                       ))}
                     </select>
                   </div>
+                </div>
+
+                {/* Referral Code Input - Collapsible */}
+                <div className="mt-1">
+                  {!showReferralInput ? (
+                    <button
+                      type="button"
+                      onClick={() => setShowReferralInput(true)}
+                      className="text-sm text-primary hover:text-orange-600 flex items-center gap-1 transition-colors"
+                    >
+                      <span>+</span>
+                      <span>Have a referral code?</span>
+                    </button>
+                  ) : (
+                    <div className={`border rounded-lg p-3 ${referredByFromUrl ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'}`}>
+                      <div className="flex items-center justify-between mb-2">
+                        <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                          {referredByFromUrl && (
+                            <span className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                              <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                              </svg>
+                            </span>
+                          )}
+                          {referredByFromUrl ? 'Referral Code Applied' : 'Referral Code (optional)'}
+                        </label>
+                        {!referredByFromUrl && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setShowReferralInput(false);
+                              setReferredBy(null);
+                            }}
+                            className="text-gray-400 hover:text-gray-600 text-sm"
+                          >
+                            ✕
+                          </button>
+                        )}
+                      </div>
+                      <input
+                        type="text"
+                        value={referredBy || ''}
+                        onChange={(e) => setReferredBy(e.target.value.toUpperCase())}
+                        placeholder="Enter code"
+                        readOnly={referredByFromUrl}
+                        className={`input-field font-mono tracking-wider ${referredByFromUrl ? 'bg-white cursor-default' : ''}`}
+                      />
+                    </div>
+                  )}
                 </div>
 
                 <button

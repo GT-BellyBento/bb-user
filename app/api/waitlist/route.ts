@@ -47,20 +47,22 @@ export async function POST(request: NextRequest) {
     const { name, email, phone, state, city, userType, referredBy } = body;
 
     // Validate required fields
-    if (!name || !email || !phone || !state || !city || !userType) {
+    if (!name || !phone || !state || !city || !userType) {
       return NextResponse.json(
         { error: 'All fields are required' },
         { status: 400 }
       );
     }
 
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return NextResponse.json(
-        { error: 'Invalid email format' },
-        { status: 400 }
-      );
+    // Validate email format (only if provided)
+    if (email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return NextResponse.json(
+          { error: 'Invalid email format' },
+          { status: 400 }
+        );
+      }
     }
 
     // Validate user type
@@ -88,7 +90,7 @@ export async function POST(request: NextRequest) {
       .from(tableName)
       .insert({
         name,
-        email,
+        email: email || null,
         phone,
         state,
         city,
