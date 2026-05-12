@@ -5,7 +5,7 @@ import { useState } from 'react';
 interface Provider {
   id: string;
   name: string;
-  email: string;
+  email: string | null;
   phone: string;
   state: string;
   city: string;
@@ -55,7 +55,7 @@ export default function ProvidersTable({ providers: initialProviders }: Props) {
     const headers = ['Name', 'Email', 'Phone', 'State', 'City', 'Profile Completed', 'Business Name', 'Capacity', 'Cuisine', 'FSSAI', 'Experience', 'Current Customers', 'Referral Code', 'Referred By', 'Referrals', 'Signup Date'];
     const rows = providers.map((p) => [
       p.name,
-      p.email,
+      p.email || '',
       p.phone,
       p.state,
       p.city,
@@ -193,7 +193,7 @@ export default function ProvidersTable({ providers: initialProviders }: Props) {
                   <tr key={provider.id} className="hover:bg-gray-50">
                     <td className="px-4 py-3 text-gray-500">{startIndex + idx + 1}</td>
                     <td className="px-4 py-3 font-medium">{provider.name}</td>
-                    <td className="px-4 py-3 text-gray-600">{provider.email}</td>
+                    <td className="px-4 py-3 text-gray-600">{provider.email || '-'}</td>
                     <td className="px-4 py-3 text-gray-600">{provider.phone}</td>
                     <td className="px-4 py-3">{provider.city}</td>
                     <td className="px-4 py-3">{provider.state}</td>

@@ -4,7 +4,7 @@ import ProvidersTable from './ProvidersTable';
 interface Provider {
   id: string;
   name: string;
-  email: string;
+  email: string | null;
   phone: string;
   state: string;
   city: string;

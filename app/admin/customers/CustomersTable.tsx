@@ -5,7 +5,7 @@ import { useState } from 'react';
 interface Customer {
   id: string;
   name: string;
-  email: string;
+  email: string | null;
   phone: string;
   state: string;
   city: string;
@@ -54,7 +54,7 @@ export default function CustomersTable({ customers: initialCustomers }: Props) {
     const headers = ['Name', 'Email', 'Phone', 'State', 'City', 'Profile Completed', 'Diet', 'Budget', 'Meals Needed', 'Current Solution', 'Urgency', 'Referral Code', 'Referred By', 'Referrals', 'Signup Date'];
     const rows = customers.map((c) => [
       c.name,
-      c.email,
+      c.email || '',
       c.phone,
       c.state,
       c.city,
@@ -190,7 +190,7 @@ export default function CustomersTable({ customers: initialCustomers }: Props) {
                   <tr key={customer.id} className="hover:bg-gray-50">
                     <td className="px-4 py-3 text-gray-500">{startIndex + idx + 1}</td>
                     <td className="px-4 py-3 font-medium">{customer.name}</td>
-                    <td className="px-4 py-3 text-gray-600">{customer.email}</td>
+                    <td className="px-4 py-3 text-gray-600">{customer.email || '-'}</td>
                     <td className="px-4 py-3 text-gray-600">{customer.phone}</td>
                     <td className="px-4 py-3">{customer.city}</td>
                     <td className="px-4 py-3">{customer.state}</td>
