@@ -716,6 +716,7 @@ export default function WaitlistForm() {
                         className="select-field"
                       >
                         <option value="">Select budget range</option>
+                        <option value="60-80">₹60 - ₹80</option>
                         <option value="80-100">₹80 - ₹100</option>
                         <option value="100-150">₹100 - ₹150</option>
                         <option value="150-200">₹150 - ₹200</option>
@@ -814,6 +815,7 @@ export default function WaitlistForm() {
                         className="select-field"
                       >
                         <option value="">Select capacity</option>
+                        <option value="less-10">Less than 10 tiffins/day</option>
                         <option value="10-25">10 - 25 tiffins/day</option>
                         <option value="25-50">25 - 50 tiffins/day</option>
                         <option value="50-100">50 - 100 tiffins/day</option>
