@@ -202,6 +202,16 @@ Platform Revenue Breakdown (Target):
 
 Introducing paid features too early kills growth. Too late means leaving money on the table.
 
+### Early Bird Incentives (Provider Commission)
+
+| When Provider Joins | Free Period (No Commission) |
+|---------------------|----------------------------|
+| **Waitlist (before launch)** | 2 months FREE |
+| **After launch** | 1 month FREE |
+| **After Month 3** | No free period |
+
+> **Why?** Early believers who joined waitlist get rewarded. Creates urgency to sign up early and builds loyalty.
+
 ### Stage-by-Stage Approach
 
 | Stage | Focus | Monetization |

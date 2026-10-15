@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { getStates, getCitiesForState } from '@/lib/locations';
 import { useToast } from '@/components/Toast';
 
@@ -22,6 +23,7 @@ interface FormData {
   currentSolution?: string;
   urgency?: string;
   // Step 2 - Provider Fields
+  businessName?: string;
   dailyCapacity?: string;
   cuisineType?: string;
   fssaiStatus?: string;
@@ -30,6 +32,7 @@ interface FormData {
 }
 
 export default function WaitlistForm() {
+  const searchParams = useSearchParams();
   const [step, setStep] = useState<Step>(1);
   const [isFlipped, setIsFlipped] = useState(false);
   const [formData, setFormData] = useState<FormData>({
@@ -42,6 +45,11 @@ export default function WaitlistForm() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const [referralCode, setReferralCode] = useState<string | null>(null);
+  const [referredBy, setReferredBy] = useState<string | null>(null);
+  const [referredByFromUrl, setReferredByFromUrl] = useState(false);
+  const [showReferralInput, setShowReferralInput] = useState(false);
+  const [codeCopied, setCodeCopied] = useState(false);
   const { showToast } = useToast();
   const frontRef = useRef<HTMLDivElement>(null);
   const backRef = useRef<HTMLDivElement>(null);
@@ -58,6 +66,24 @@ export default function WaitlistForm() {
   const states = getStates();
   // Get cities based on selected state
   const cities = formData.state ? getCitiesForState(formData.state) : [];
+
+  // Read URL params on load: r=p/c for user type, ref=CODE for referral
+  useEffect(() => {
+    const typeParam = searchParams.get('r');
+    const refParam = searchParams.get('ref');
+    
+    if (typeParam === 'p') {
+      setFormData((prev) => ({ ...prev, userType: 'provider' }));
+    } else if (typeParam === 'c') {
+      setFormData((prev) => ({ ...prev, userType: 'customer' }));
+    }
+    
+    if (refParam) {
+      setReferredBy(refParam);
+      setReferredByFromUrl(true);
+      setShowReferralInput(true);
+    }
+  }, [searchParams]);
 
   // Update card height based on current step
   useEffect(() => {
@@ -110,22 +136,16 @@ export default function WaitlistForm() {
       return;
     }
 
-    if (!formData.email.trim()) {
-      showToast('Please enter your email address', 'error');
-      setIsSubmitting(false);
-      emailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      emailRef.current?.focus();
-      return;
-    }
-
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
-      showToast('Please enter a valid email address', 'error');
-      setIsSubmitting(false);
-      emailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      emailRef.current?.focus();
-      return;
+    // Validate email format only if provided
+    if (formData.email.trim()) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email)) {
+        showToast('Please enter a valid email address', 'error');
+        setIsSubmitting(false);
+        emailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        emailRef.current?.focus();
+        return;
+      }
     }
 
     // Validate phone is exactly 10 digits
@@ -160,6 +180,7 @@ export default function WaitlistForm() {
         body: JSON.stringify({
           ...formData,
           phone: `+91${formData.phone}`, // Add +91 prefix when sending to API
+          referredBy: referredBy,
           step: 1,
         }),
       });
@@ -171,6 +192,7 @@ export default function WaitlistForm() {
       }
 
       setUserId(data.id);
+      setReferralCode(data.referralCode);
       setIsFlipped(true);
       setTimeout(() => setStep(2), 300);
     } catch (err) {
@@ -199,6 +221,7 @@ export default function WaitlistForm() {
           currentSolution: formData.currentSolution,
           urgency: formData.urgency,
           // Provider fields
+          businessName: formData.businessName,
           dailyCapacity: formData.dailyCapacity,
           cuisineType: formData.cuisineType,
           fssaiStatus: formData.fssaiStatus,
@@ -231,24 +254,32 @@ export default function WaitlistForm() {
       userType: 'customer',
     });
     setUserId(null);
+    setReferralCode(null);
+    setReferredBy(null);
+    setReferredByFromUrl(false);
+    setShowReferralInput(false);
+    setCodeCopied(false);
   };
 
-  // Share messages based on user type
-  const shareMessages = {
-    customer: "Found this cool tiffin service called BellyBento! Fresh homemade meals delivered daily. Join the waitlist: https://bellybento.com",
-    provider: "Hey! I signed up for BellyBento - a platform that connects tiffin providers with customers. Great for growing your business! Check it out: https://bellybento.com",
+  // Share messages based on user type - include user's referral code
+  const getShareMessage = () => {
+    const refCode = referralCode ? `&ref=${referralCode}` : '';
+    if (formData.userType === 'customer') {
+      return `Found this cool tiffin service called BellyBento! Fresh homemade meals delivered daily. Join the waitlist: https://bellybento.com?r=c${refCode}`;
+    }
+    return `Hey! I signed up for BellyBento - a platform that connects tiffin providers with customers. Great for growing your business! Check it out: https://bellybento.com?r=p${refCode}`;
   };
 
   const [copied, setCopied] = useState(false);
 
   const handleWhatsAppShare = () => {
-    const message = encodeURIComponent(shareMessages[formData.userType]);
+    const message = encodeURIComponent(getShareMessage());
     window.open(`https://wa.me/?text=${message}`, '_blank');
   };
 
   const handleCopyMessage = async () => {
     try {
-      await navigator.clipboard.writeText(shareMessages[formData.userType]);
+      await navigator.clipboard.writeText(getShareMessage());
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
@@ -271,6 +302,39 @@ export default function WaitlistForm() {
             <p className="text-gray-600 text-lg mb-6">
               Thank you for joining the BellyBento waitlist. We&apos;ll notify you as soon as we launch in your area.
             </p>
+
+            {/* Referral Code Display - Copyable */}
+            {referralCode && (
+              <div 
+                onClick={async () => {
+                  try {
+                    await navigator.clipboard.writeText(referralCode);
+                    setCodeCopied(true);
+                    setTimeout(() => setCodeCopied(false), 2000);
+                  } catch (err) {
+                    console.error('Failed to copy:', err);
+                  }
+                }}
+                className="bg-primary/10 border border-primary/20 rounded-xl p-4 mb-6 cursor-pointer hover:bg-primary/15 transition-colors group"
+              >
+                <p className="text-sm text-gray-600 mb-1">Your Referral Code</p>
+                <div className="flex items-center justify-center gap-2">
+                  <p className="text-2xl font-bold text-primary tracking-wider font-mono">{referralCode}</p>
+                  {codeCopied ? (
+                    <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  ) : (
+                    <svg className="w-5 h-5 text-primary/50 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                  )}
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  {codeCopied ? '✓ Copied!' : 'Tap to copy'}
+                </p>
+              </div>
+            )}
 
             {/* Share Section */}
             <div className="border-t border-gray-200 pt-6 mt-6">
@@ -315,67 +379,117 @@ export default function WaitlistForm() {
     );
   }
 
+  // Benefits based on user type
+  const customerBenefits = [
+    { icon: '🚀', text: 'Early access to best providers' },
+    { icon: '🎉', text: '1 month zero platform fee' },
+    { icon: '🎁', text: '₹100 Welcome Credits' },
+  ];
+
+  const providerBenefits = [
+    { icon: '💰', text: 'Zero commission for 2 months' },
+    { icon: '⭐', text: 'Priority listing in your area' },
+    { icon: '🤝', text: 'Free onboarding support' },
+  ];
+
+  const benefits = formData.userType === 'customer' ? customerBenefits : providerBenefits;
+
   return (
     <section id="waitlist" className="py-16 sm:py-24 bg-primary">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flip-container">
-          <div
-            className={`flip-card ${isFlipped ? 'flipped' : ''}`}
-            style={{ height: cardHeight ? `${cardHeight}px` : 'auto' }}
-          >
-            {/* FRONT - Step 1 */}
-            <div
-              ref={frontRef}
-              className={`flip-card-front bg-white rounded-2xl p-6 sm:p-10 shadow-xl ${isFlipped ? 'invisible' : ''}`}
-            >
-              <div className="text-center mb-8">
-                <h2 className="text-3xl sm:text-4xl font-bold text-dark mb-3">
-                  Join the Waitlist
-                </h2>
-                <p className="text-gray-600">
-                  Be the first to know when BellyBento launches in your city
-                </p>
-              </div>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          
+          {/* Benefits Panel - Left Side */}
+          <div className="text-white order-2 lg:order-1">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+              Why Join Early?
+            </h2>
+            <p className="text-white/80 text-lg mb-8">
+              {formData.userType === 'customer' 
+                ? 'Get exclusive perks as a founding member'
+                : 'Grow your tiffin business with zero risk'
+              }
+            </p>
+            
+            <div className="space-y-4">
+              {benefits.map((benefit, index) => (
+                <div 
+                  key={index}
+                  className="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-xl p-4 transition-all duration-300"
+                >
+                  <span className="text-3xl">{benefit.icon}</span>
+                  <span className="text-lg font-medium">{benefit.text}</span>
+                </div>
+              ))}
+            </div>
 
-              {/* User Type Toggle with Sliding Animation */}
-              <div className="relative flex rounded-lg bg-gray-100 p-1 mb-8">
-                {/* Sliding Background */}
+            <p className="mt-8 text-white/60 text-sm">
+              * Terms and conditions apply. See our <a href="/terms" className="underline hover:text-white">Terms of Service</a> for details.
+            </p>
+          </div>
+
+          {/* Form Panel - Right Side */}
+          <div className="order-1 lg:order-2">
+            <div className="flip-container">
+              <div
+                className={`flip-card ${isFlipped ? 'flipped' : ''}`}
+                style={{ height: cardHeight ? `${cardHeight}px` : 'auto' }}
+              >
+                {/* FRONT - Step 1 */}
                 <div
-                  className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-primary rounded-md shadow transition-all duration-300 ease-out ${formData.userType === 'provider' ? 'left-[calc(50%+2px)]' : 'left-1'
-                    }`}
-                />
-                <button
-                  type="button"
-                  onClick={() => handleUserTypeChange('customer')}
-                  className={`relative flex-1 py-3 px-4 rounded-md font-medium transition-colors duration-200 flex items-center justify-center gap-2 z-10 ${formData.userType === 'customer'
-                      ? 'text-white'
-                      : 'text-gray-600 hover:text-dark'
-                    }`}
+                  ref={frontRef}
+                  className={`flip-card-front bg-white rounded-2xl p-6 sm:p-10 shadow-xl ${isFlipped ? 'invisible' : ''}`}
                 >
-                  <span>🍱</span>
-                  I Need Tiffins
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleUserTypeChange('provider')}
-                  className={`relative flex-1 py-3 px-4 rounded-md font-medium transition-colors duration-200 flex items-center justify-center gap-2 z-10 ${formData.userType === 'provider'
-                      ? 'text-white'
-                      : 'text-gray-600 hover:text-dark'
-                    }`}
-                >
-                  <span>👨‍🍳</span>
-                  I&apos;m a Provider
-                </button>
-              </div>
+                  <div className="text-center mb-8">
+                    <h2 className="text-3xl sm:text-4xl font-bold text-dark mb-3">
+                      Join the Waitlist
+                    </h2>
+                    <p className="text-gray-600">
+                      Be the first to know when BellyBento launches in your city
+                    </p>
+                  </div>
 
-              {/* Step 1 Form */}
-              <form onSubmit={handleStep1Submit} className="space-y-5">
-                <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                    Full Name *
-                  </label>
-                  <input
-                    ref={nameRef}
+                  {/* User Type Toggle with Sliding Animation */}
+                  <div className="relative flex rounded-lg bg-gray-100 p-1 mb-8">
+                    {/* Sliding Background */}
+                    <div
+                      className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-primary rounded-md shadow transition-all duration-300 ease-out ${formData.userType === 'provider' ? 'left-[calc(50%+2px)]' : 'left-1'
+                        }`}
+                    />
+                    <button
+                      type="button"
+                      data-type="customer"
+                      onClick={() => handleUserTypeChange('customer')}
+                      className={`relative flex-1 py-3 px-4 rounded-md font-medium transition-colors duration-200 flex items-center justify-center gap-2 z-10 ${formData.userType === 'customer'
+                          ? 'text-white'
+                          : 'text-gray-600 hover:text-dark'
+                        }`}
+                    >
+                      <span>🍱</span>
+                      I Need Tiffins
+                    </button>
+                    <button
+                      type="button"
+                      data-type="provider"
+                      onClick={() => handleUserTypeChange('provider')}
+                      className={`relative flex-1 py-3 px-4 rounded-md font-medium transition-colors duration-200 flex items-center justify-center gap-2 z-10 ${formData.userType === 'provider'
+                          ? 'text-white'
+                          : 'text-gray-600 hover:text-dark'
+                        }`}
+                    >
+                      <span>👨‍🍳</span>
+                      I&apos;m a Provider
+                    </button>
+                  </div>
+
+                  {/* Step 1 Form */}
+                  <form onSubmit={handleStep1Submit} className="space-y-5">
+                    <div>
+                      <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                        Full Name *
+                      </label>
+                      <input
+                        ref={nameRef}
                     type="text"
                     id="name"
                     name="name"
@@ -389,14 +503,13 @@ export default function WaitlistForm() {
 
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                    Email Address *
+                    Email Address (optional)
                   </label>
                   <input
                     ref={emailRef}
                     type="email"
                     id="email"
                     name="email"
-                    required
                     value={formData.email}
                     onChange={handleChange}
                     placeholder="you@example.com"
@@ -477,6 +590,55 @@ export default function WaitlistForm() {
                   </div>
                 </div>
 
+                {/* Referral Code Input - Collapsible */}
+                <div className="mt-1">
+                  {!showReferralInput ? (
+                    <button
+                      type="button"
+                      onClick={() => setShowReferralInput(true)}
+                      className="text-sm text-primary hover:text-orange-600 flex items-center gap-1 transition-colors"
+                    >
+                      <span>+</span>
+                      <span>Have a referral code?</span>
+                    </button>
+                  ) : (
+                    <div className={`border rounded-lg p-3 ${referredByFromUrl ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'}`}>
+                      <div className="flex items-center justify-between mb-2">
+                        <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                          {referredByFromUrl && (
+                            <span className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                              <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                              </svg>
+                            </span>
+                          )}
+                          {referredByFromUrl ? 'Referral Code Applied' : 'Referral Code (optional)'}
+                        </label>
+                        {!referredByFromUrl && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setShowReferralInput(false);
+                              setReferredBy(null);
+                            }}
+                            className="text-gray-400 hover:text-gray-600 text-sm"
+                          >
+                            ✕
+                          </button>
+                        )}
+                      </div>
+                      <input
+                        type="text"
+                        value={referredBy || ''}
+                        onChange={(e) => setReferredBy(e.target.value.toUpperCase())}
+                        placeholder="Enter code"
+                        readOnly={referredByFromUrl}
+                        className={`input-field font-mono tracking-wider ${referredByFromUrl ? 'bg-white cursor-default' : ''}`}
+                      />
+                    </div>
+                  )}
+                </div>
+
                 <button
                   type="submit"
                   disabled={isSubmitting}
@@ -554,6 +716,7 @@ export default function WaitlistForm() {
                         className="select-field"
                       >
                         <option value="">Select budget range</option>
+                        <option value="60-80">₹60 - ₹80</option>
                         <option value="80-100">₹80 - ₹100</option>
                         <option value="100-150">₹100 - ₹150</option>
                         <option value="150-200">₹150 - ₹200</option>
@@ -626,6 +789,21 @@ export default function WaitlistForm() {
                 {formData.userType === 'provider' && (
                   <>
                     <div>
+                      <label htmlFor="businessName" className="block text-sm font-medium text-gray-700 mb-1">
+                        Business Name
+                      </label>
+                      <input
+                        type="text"
+                        id="businessName"
+                        name="businessName"
+                        value={formData.businessName || ''}
+                        onChange={handleChange}
+                        placeholder="Enter your tiffin center name"
+                        className="input-field"
+                      />
+                    </div>
+
+                    <div>
                       <label htmlFor="dailyCapacity" className="block text-sm font-medium text-gray-700 mb-1">
                         Daily Tiffin Capacity
                       </label>
@@ -637,6 +815,7 @@ export default function WaitlistForm() {
                         className="select-field"
                       >
                         <option value="">Select capacity</option>
+                        <option value="less-10">Less than 10 tiffins/day</option>
                         <option value="10-25">10 - 25 tiffins/day</option>
                         <option value="25-50">25 - 50 tiffins/day</option>
                         <option value="50-100">50 - 100 tiffins/day</option>
@@ -754,6 +933,8 @@ export default function WaitlistForm() {
               </form>
             </div>
           </div>
+        </div>
+      </div>
         </div>
       </div>
     </section>
